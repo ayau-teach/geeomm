@@ -1,0 +1,286 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sin, cos, tg, ctg ойыны</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one centred column on squared-notebook paper; figure and question card on top, four answer buttons below, feedback under the buttons. */
+:root {
+  --paper: #fbfaf4;
+  --grid: #cfe0ea;
+  --ink: #1d2b3a;
+  --ink-soft: #55677a;
+  --pencil: #2b5fa8;
+  --card: #ffffff;
+  --line: #b9c9d6;
+  --ok: #16874a;
+  --on-ok: #ffffff;
+  --ok-soft: #dcf3e5;
+  --bad: #c62f2f;
+  --on-bad: #ffffff;
+  --bad-soft: #fbe1e1;
+  --font-display: "Rubik", "Segoe UI", Arial, sans-serif;
+  --font-body: "Nunito", "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14202b; --grid: #1f3140; --ink: #e8eef4; --ink-soft: #9db1c3;
+    --pencil: #7fb0f0; --card: #1b2a38; --line: #36506a;
+    --ok: #34c27a; --on-ok: #06210f; --ok-soft: #14382a;
+    --bad: #ff6b6b; --on-bad: #2b0505; --bad-soft: #402021;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14202b; --grid: #1f3140; --ink: #e8eef4; --ink-soft: #9db1c3;
+  --pencil: #7fb0f0; --card: #1b2a38; --line: #36506a;
+  --ok: #34c27a; --on-ok: #06210f; --ok-soft: #14382a;
+  --bad: #ff6b6b; --on-bad: #2b0505; --bad-soft: #402021;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.45;
+  padding-block: 24px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  min-height: 100vh;
+}
+main { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.tag { font-family: var(--font-display); font-weight: 500; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--pencil); margin: 0; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 6vw, 36px); line-height: 1.1; margin: 4px 0 0; text-wrap: balance; }
+.sub { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; }
+
+.pips { display: flex; gap: 6px; align-items: center; }
+.pip { flex: 1; height: 8px; border-radius: 4px; background: var(--line); transition: background .2s; }
+.pip.now { background: var(--pencil); }
+.pip.ok { background: var(--ok); }
+.pip.bad { background: var(--bad); }
+.count { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.card { background: var(--card); border: 2px solid var(--ink); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.fig { display: flex; justify-content: center; }
+.fig svg { width: 100%; max-width: 280px; height: auto; display: block; }
+.fig .ln { stroke: var(--ink); stroke-width: 2.4; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.fig .ang { stroke: var(--pencil); stroke-width: 2; fill: none; }
+.fig text { fill: var(--ink); font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+.fig text.g { fill: var(--pencil); font-style: italic; font-family: var(--font-body); font-weight: 800; font-size: 17px; }
+.fig text.s { font-style: italic; font-family: var(--font-body); font-weight: 800; font-size: 17px; }
+.q { font-family: var(--font-display); font-weight: 600; font-size: clamp(18px, 4.6vw, 21px); line-height: 1.3; margin: 0; text-wrap: balance; }
+.given { margin: 0; padding: 8px 12px; border-left: 4px solid var(--pencil); background: var(--paper); font-size: 16px; }
+
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .opts { grid-template-columns: 1fr; } }
+.opt {
+  font: inherit; font-family: var(--font-display); font-weight: 500; font-size: 18px; color: var(--ink);
+  background: var(--card); border: 2px solid var(--ink); border-radius: 8px;
+  min-height: 56px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer;
+  box-shadow: 0 3px 0 var(--ink); transition: transform .08s, box-shadow .08s, background .15s;
+}
+.opt:hover:not(:disabled) { background: var(--paper); }
+.opt:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
+.opt:focus-visible, .btn:focus-visible { outline: 3px solid var(--pencil); outline-offset: 3px; }
+.opt .mk { font-weight: 700; color: var(--pencil); flex: none; width: 1.2em; }
+.opt:disabled { cursor: default; }
+.opt.ok { background: var(--ok); border-color: var(--ok); color: var(--on-ok); box-shadow: 0 3px 0 var(--ok); }
+.opt.bad { background: var(--bad); border-color: var(--bad); color: var(--on-bad); box-shadow: 0 3px 0 var(--bad); }
+.opt.ok .mk, .opt.bad .mk { color: inherit; }
+.opt.dim { opacity: .55; }
+
+.fb { border-radius: 8px; padding: 12px 14px; font-size: 16px; display: flex; flex-direction: column; gap: 4px; }
+.fb.ok { background: var(--ok-soft); border: 2px solid var(--ok); }
+.fb.bad { background: var(--bad-soft); border: 2px solid var(--bad); }
+.fb .head { font-family: var(--font-display); font-weight: 700; }
+.fb.ok .head { color: var(--ok); }
+.fb.bad .head { color: var(--bad); }
+.fb .right { font-family: var(--font-display); font-weight: 600; font-size: 19px; color: var(--ok); }
+.fb .why { color: var(--ink); }
+
+.btn { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: #fff; background: var(--pencil); border: 2px solid var(--ink); border-radius: 8px; padding: 12px 20px; cursor: pointer; align-self: flex-end; box-shadow: 0 3px 0 var(--ink); }
+:root[data-theme="dark"] .btn { color: #0b1620; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0b1620; } }
+.btn:active { transform: translateY(3px); box-shadow: none; }
+
+i.v { font-family: var(--font-body); font-style: italic; font-weight: 800; }
+.fr { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1.15; margin: 0 .15em; }
+.fr > span:first-child { border-bottom: 2px solid currentColor; padding: 0 .3em 1px; }
+.fr > span:last-child { padding: 1px .3em 0; }
+
+.result { text-align: center; align-items: center; padding: 28px 18px; }
+.score { font-family: var(--font-display); font-weight: 700; font-size: 64px; line-height: 1; font-variant-numeric: tabular-nums; }
+.score small { font-size: 28px; color: var(--ink-soft); font-weight: 500; }
+.result p { margin: 0; }
+.result .btn { align-self: center; }
+.rev { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.rev span { width: 30px; height: 30px; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-display); font-weight: 600; font-size: 14px; }
+.rev .ok { background: var(--ok); color: var(--on-ok); }
+.rev .bad { background: var(--bad); color: var(--on-bad); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main>
+  <header>
+    <p class="tag">8-сынып · Геометрия · 2-тоқсан · 8.1.3.2</p>
+    <h1>Sin, cos, tg, ctg ойыны</h1>
+    <p class="sub">Тік бұрышты үшбұрыштың сүйір бұрышының анықтамалары. 10 сұрақ, жауапты басып таңда.</p>
+  </header>
+  <div class="pips" id="pips"></div>
+  <div id="stage"></div>
+</main>
+
+<script>
+const fr = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const v = s => `<i class="v">${s}</i>`;
+
+const FIG = `
+<svg viewBox="0 0 240 156" role="img" aria-label="Тік бұрышты ABC үшбұрышы: C төбесінде тік бұрыш, A төбесінде α бұрышы, AC = b, BC = a, AB = c">
+  <path class="ln" d="M30 125 L190 125 L190 30 Z"/>
+  <path class="ln" d="M180 125 L180 115 L190 115"/>
+  <path class="ang" d="M64 125 A34 34 0 0 0 59.2 107.6"/>
+  <text x="12" y="141">A</text>
+  <text x="196" y="143">C</text>
+  <text x="196" y="26">B</text>
+  <text class="g" x="70" y="118">α</text>
+  <text class="s" x="106" y="146">b</text>
+  <text class="s" x="204" y="82">a</text>
+  <text class="s" x="96" y="62">c</text>
+</svg>`;
+
+const BASE = `<i class="v">c</i> гипотенуза, <i class="v">a</i> катет α бұрышына қарсы, <i class="v">b</i> катет α бұрышына іргелес.`;
+
+const QUESTIONS = [
+  { q: `α бұрышына қарсы жатқан ${v("a")} катетін гипотенуза ${v("c")} және α арқылы қалай өрнектеуге болады?`,
+    opts: [`${v("a")} = ${v("c")} · sin α`, `${v("a")} = ${v("c")} · cos α`, `${v("a")} = ${v("c")} · tg α`, `${v("a")} = ${v("c")} · ctg α`],
+    ans: 0,
+    why: `sin α = ${fr(v("a"), v("c"))} болғандықтан, ${v("a")} = ${v("c")} · sin α.` },
+  { q: `Сүйір бұрыштың синусы (sin α) деп нені айтады?`,
+    opts: [`Қарсы катеттің гипотенузаға қатынасы`, `Іргелес катеттің гипотенузаға қатынасы`, `Қарсы катеттің іргелес катетке қатынасы`, `Іргелес катеттің қарсы катетке қатынасы`],
+    ans: 0,
+    why: `sin α = қарсы катет : гипотенуза = ${fr(v("a"), v("c"))}.` },
+  { q: `Сүйір бұрыштың косинусы cos α тік бұрышты үшбұрыштың қабырғалары арқылы қалай жазылады?`,
+    opts: [fr(v("a"), v("c")), fr(v("b"), v("c")), fr(v("a"), v("b")), fr(v("b"), v("a"))],
+    ans: 1,
+    why: `cos α = іргелес катет : гипотенуза = ${fr(v("b"), v("c"))}.` },
+  { q: `Сүйір бұрыштың тангенсі tg α неге тең?`,
+    opts: [fr(v("b"), v("a")), fr(v("a"), v("c")), fr(v("a"), v("b")), fr(v("b"), v("c"))],
+    ans: 2,
+    why: `tg α = қарсы катет : іргелес катет = ${fr(v("a"), v("b"))}.` },
+  { q: `ctg α қатынасын қалай өрнектеуге болады?`,
+    opts: [`${fr("sin α", "cos α")}`, `sin α · cos α`, `${fr("cos α", "sin α")}`, `${fr("1", "cos α")}`],
+    ans: 2,
+    why: `ctg α = ${fr("cos α", "sin α")} = ${fr(v("b"), v("a"))}, яғни іргелес катеттің қарсы катетке қатынасы.` },
+  { q: `Іргелес жатқан ${v("b")} катетін қарсы жатқан ${v("a")} катеті және α бұрышы арқылы өрнектеңдер.`,
+    opts: [`${v("b")} = ${v("a")} · tg α`, `${v("b")} = ${v("a")} · sin α`, `${v("b")} = ${v("a")} · ctg α`, `${v("b")} = ${v("a")} · cos α`],
+    ans: 2,
+    why: `ctg α = ${fr(v("b"), v("a"))} теңдігінен ${v("b")} = ${v("a")} · ctg α.` },
+  { q: `Тік бұрышты үшбұрышта ${v("a")} = 3, ${v("b")} = 4, ${v("c")} = 5. sin α неге тең?`,
+    opts: [fr(4, 5), fr(3, 4), fr(4, 3), fr(3, 5)],
+    ans: 3,
+    why: `sin α = ${fr(v("a"), v("c"))} = ${fr(3, 5)}.` },
+  { q: `Тік бұрышты үшбұрышта ${v("a")} = 5, ${v("b")} = 12, ${v("c")} = 13. cos α неге тең?`,
+    opts: [fr(5, 13), fr(12, 13), fr(5, 12), fr(12, 5)],
+    ans: 1,
+    why: `cos α = ${fr(v("b"), v("c"))} = ${fr(12, 13)}.` },
+  { q: `Гипотенуза ${v("c")} = 20, sin α = 0,6. Қарсы жатқан ${v("a")} катетін табыңдар.`,
+    opts: [`${v("a")} = 14`, `${v("a")} = 16`, `${v("a")} = 26`, `${v("a")} = 12`],
+    ans: 3,
+    why: `${v("a")} = ${v("c")} · sin α = 20 · 0,6 = 12.` },
+  { q: `Іргелес жатқан ${v("b")} катеті 8-ге тең, tg α = 0,75. Қарсы жатқан ${v("a")} катетін табыңдар.`,
+    opts: [`${v("a")} = 10,7`, `${v("a")} = 6`, `${v("a")} = 8,75`, `${v("a")} = 7,5`],
+    ans: 1,
+    why: `tg α = ${fr(v("a"), v("b"))} болғандықтан, ${v("a")} = ${v("b")} · tg α = 8 · 0,75 = 6.` },
+];
+
+const MARK = ["А", "Б", "В", "Г"];
+const stage = document.getElementById("stage");
+const pipsEl = document.getElementById("pips");
+let order, idx, results, answered;
+
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function start() {
+  order = QUESTIONS.map(q => {
+    const idxs = shuffle([0, 1, 2, 3]);
+    return { q: q.q, why: q.why, opts: idxs.map(i => q.opts[i]), ans: idxs.indexOf(q.ans) };
+  });
+  idx = 0; results = []; answered = false;
+  render();
+}
+
+function pips() {
+  pipsEl.innerHTML = order.map((_, i) => {
+    const c = i < results.length ? (results[i] ? "ok" : "bad") : (i === idx ? "now" : "");
+    return `<span class="pip ${c}"></span>`;
+  }).join("") + `<span class="count">${Math.min(idx + 1, 10)} / 10</span>`;
+}
+
+function render() {
+  pips();
+  const Q = order[idx];
+  stage.innerHTML = `
+    <section class="card" aria-live="polite">
+      <div class="fig">${FIG}</div>
+      <p class="q">${Q.q}</p>
+      <div class="opts" id="opts">
+        ${Q.opts.map((o, i) => `<button type="button" class="opt" data-i="${i}"><span class="mk">${MARK[i]}</span><span>${o}</span></button>`).join("")}
+      </div>
+      <div id="fb"></div>
+      <button type="button" class="btn" id="next" hidden></button>
+    </section>`;
+  answered = false;
+  stage.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => pick(+b.dataset.i)));
+}
+
+function pick(i) {
+  if (answered) return;
+  answered = true;
+  const Q = order[idx];
+  const good = i === Q.ans;
+  results.push(good);
+  const btns = stage.querySelectorAll(".opt");
+  btns.forEach((b, k) => {
+    b.disabled = true;
+    if (k === i) b.classList.add(good ? "ok" : "bad");
+    else b.classList.add("dim");
+  });
+  const rightHtml = Q.opts[Q.ans];
+  document.getElementById("fb").innerHTML = good
+    ? `<div class="fb ok"><span class="head">Дұрыс!</span><span class="why">${Q.why}</span></div>`
+    : `<div class="fb bad"><span class="head">Қате. Дұрыс жауабы:</span><span class="right">${MARK[Q.ans]}) ${rightHtml}</span><span class="why">${Q.why}</span></div>`;
+  const nx = document.getElementById("next");
+  nx.hidden = false;
+  nx.textContent = idx === order.length - 1 ? "Нәтижені көру" : "Келесі сұрақ";
+  nx.addEventListener("click", () => { idx++; idx < order.length ? render() : finish(); });
+  nx.focus({ preventScroll: false });
+  pips();
+}
+
+function finish() {
+  const s = results.filter(Boolean).length;
+  const msg = s === 10 ? "Өте жақсы! Барлық сұраққа дұрыс жауап бердің." : s >= 7 ? "Жақсы нәтиже. Қате кеткен сұрақтарды қайталап көр." : s >= 4 ? "Бастама жаман емес. Анықтамаларды қайта қарап, тағы бір рет ойнап көр." : "Анықтамаларды қайталап, қайтадан байқап көр.";
+  idx = order.length;
+  pipsEl.innerHTML = results.map(r => `<span class="pip ${r ? "ok" : "bad"}"></span>`).join("") + `<span class="count">10 / 10</span>`;
+  stage.innerHTML = `
+    <section class="card result">
+      <p class="tag">Нәтиже</p>
+      <div class="score">${s}<small> / 10</small></div>
+      <p>${msg}</p>
+      <div class="rev" aria-label="Әр сұрақтың нәтижесі">${results.map((r, i) => `<span class="${r ? "ok" : "bad"}">${i + 1}</span>`).join("")}</div>
+      <button type="button" class="btn" id="again">Қайта ойнау</button>
+    </section>`;
+  document.getElementById("again").addEventListener("click", start);
+}
+
+start();
+</script>
+
+</body></html>
